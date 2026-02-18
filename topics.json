@@ -1,0 +1,140 @@
+{
+  "day_themes": [
+    "Inflation as a Wealth Transfer Mechanism",
+    "Interest Rate Cycles and Asset Allocation",
+    "Currency Devaluation and Real Purchasing Power",
+    "The Velocity of Money and Economic Recessions",
+    "Credit Cycles: How Debt Fuels and Destroys Economies",
+    "Yield Curve Inversion as a Recession Signal",
+    "The Carry Trade and Global Capital Flows",
+    "Central Bank Balance Sheets and Market Liquidity",
+    "Commodity Supercycles and Portfolio Positioning",
+    "Dollar Dominance and the Petrodollar System",
+    "Stagflation: When Growth and Inflation Collide",
+    "Fiscal Deficits and Their Long-Term Market Impact",
+    "The Real Estate Cycle: 18-Year Patterns",
+    "Corporate Debt Leverage and Earnings Quality",
+    "Quantitative Tightening and Credit Contraction",
+    "Sovereign Debt Crises: Anatomy of a Collapse",
+    "The Wealth Gap and Its Macroeconomic Consequences",
+    "Supply Chain Shocks and Pricing Power",
+    "Capital Gains Tax and Investment Behavior",
+    "Monetary vs Fiscal Policy: Who Wins the Tug of War",
+    "Emerging Market Currency Risk and Opportunity",
+    "The Business Cycle: Expansion, Peak, Contraction, Trough",
+    "Asset Bubbles: Psychology and Fundamentals",
+    "Return on Invested Capital as a Wealth Indicator",
+    "The Power of Compounding at Different Rates",
+    "Portfolio Concentration vs Diversification",
+    "Shorting the Market: Risk, Reward, and Timing",
+    "Private Equity vs Public Markets: The Real Difference",
+    "ESG Investing: Alpha or Marketing?",
+    "Geopolitical Risk Premiums in Global Markets"
+  ],
+  "case_studies": [
+    {"id": "weimar", "title": "Weimar Republic Hyperinflation (1921–1923)", "summary": "Germany printed money to pay war reparations, destroying the mark. By November 1923, 1 USD = 4.2 trillion marks. Citizens burned currency for warmth."},
+    {"id": "japan_lost_decade", "title": "Japan's Lost Decade (1991–2001)", "summary": "After a real estate and equity bubble, Japan's Nikkei fell 60%. GDP growth averaged 1.1% for 10 years. Zero interest rate policy failed to revive demand."},
+    {"id": "argentina_2001", "title": "Argentina Debt Default (2001)", "summary": "After pegging the peso to the USD, Argentina ran unsustainable deficits. GDP contracted 11% in 2002. Unemployment hit 25%. Over $100B in sovereign debt defaulted."},
+    {"id": "gfc_2008", "title": "Global Financial Crisis (2008)", "summary": "Mortgage-backed securities with hidden subprime exposure caused Lehman Brothers to collapse. $11 trillion in household wealth was wiped out in the US alone."},
+    {"id": "dot_com", "title": "Dot-Com Bubble (1999–2001)", "summary": "NASDAQ rose 400% then fell 78%. Companies with no revenue traded at 100x sales. $5 trillion in market cap evaporated between 2000–2002."},
+    {"id": "turkey_lira", "title": "Turkish Lira Crisis (2018–2021)", "summary": "Erdogan pressured the central bank to cut rates during inflation. The lira lost 80% against the USD between 2018–2021. Inflation hit 85% in 2022."},
+    {"id": "china_evergrande", "title": "Evergrande Collapse (2021)", "summary": "China's second-largest property developer held $300B in liabilities. Its collapse threatened 40% of China's GDP tied to real estate. Beijing refused a full bailout."},
+    {"id": "svb_2023", "title": "Silicon Valley Bank Failure (2023)", "summary": "SVB held long-duration bonds in a rising rate environment. When rates surged, bond values collapsed. A $1.8B loss disclosure triggered a $42B bank run in 48 hours."},
+    {"id": "saudi_aramco", "title": "Saudi Aramco IPO (2019)", "summary": "The world's largest IPO at $25.6B. Aramco's profits of $161B in 2022 dwarfed all Western oil majors combined. A case study in state-controlled resource monetization."},
+    {"id": "berkshire", "title": "Berkshire Hathaway's Cash Discipline (2023)", "summary": "Buffett held $147B in cash when markets were richly valued. This 'dry powder' strategy allowed selective deployment during dislocations — patience as a return strategy."},
+    {"id": "fed_2022", "title": "Fed's 2022 Rate Hike Cycle", "summary": "The fastest tightening since 1981: 525bps in 18 months. US 10-year Treasury went from 1.5% to 5%. Caused $18 trillion in global bond losses — the worst fixed income drawdown in history."},
+    {"id": "tesla_short", "title": "Tesla Short Sellers (2019–2021)", "summary": "Bears lost $38B in 2020 alone as Tesla rose 740%. The company was unprofitable for years but commanded a $1.2T valuation at peak. A case study in narrative vs fundamentals."},
+    {"id": "norway_sovereign", "title": "Norway Government Pension Fund", "summary": "The world's largest sovereign wealth fund at $1.6T, funded by oil revenues. Owns 1.5% of all global listed equities. A model of intergenerational wealth preservation."},
+    {"id": "softbank_vision", "title": "SoftBank Vision Fund Losses (2022)", "summary": "SoftBank's $100B Vision Fund lost $27B in a single fiscal year. Over-concentration in unprofitable tech at peak valuations. A master class in leverage risk."},
+    {"id": "zimbabwe", "title": "Zimbabwe Hyperinflation (2007–2009)", "summary": "Inflation reached 89.7 sextillion percent per month. The government printed $100 trillion notes. Citizens transacted in USD and foreign goods. Currency was eventually abandoned."}
+  ],
+  "macro_events": [
+    "Federal Reserve signals pivot from quantitative tightening",
+    "China's property sector accounting for 25% of GDP shows structural stress",
+    "US national debt crosses $34 trillion with no credible reduction plan",
+    "BRICS nations exploring a commodity-backed trade settlement currency",
+    "AI-driven productivity surge reshapes labor market wage dynamics",
+    "European energy crisis forces industrial relocation to the US",
+    "Japan finally exits negative interest rate policy after 8 years",
+    "US commercial real estate faces $929B in refinancing pressure through 2025",
+    "Global central banks buy record gold — 1,136 tonnes in 2022 alone",
+    "De-dollarization trends accelerate in Southeast Asia and Middle East",
+    "Private credit market surpasses $1.7 trillion, outpacing traditional bank lending",
+    "US deficit spending at 6.3% of GDP during peacetime — historically anomalous",
+    "Credit card delinquencies hit 12-year highs as consumer savings depleted",
+    "Oil-producing nations increase domestic refining capacity to capture more margin",
+    "Global shipping costs spike 300% due to Red Sea route disruptions"
+  ],
+  "quotes": [
+    {
+      "person": "Ray Dalio",
+      "source": "Bridgewater Principles, LinkedIn, 2017",
+      "quote": "He who lives by the crystal ball will eat shattered glass.",
+      "context": "Dalio said this when discussing probabilistic thinking vs prediction in managing Bridgewater's All Weather Portfolio.",
+      "principle": "Stress-test scenarios rather than forecasting single outcomes. Position for multiple futures simultaneously."
+    },
+    {
+      "person": "Warren Buffett",
+      "source": "Berkshire Hathaway Annual Letter, 2004",
+      "quote": "Price is what you pay. Value is what you get.",
+      "context": "Buffett wrote this distinguishing the market price of an asset from its intrinsic economic value during a period of irrational exuberance.",
+      "principle": "Separate the market's opinion of an asset from the cash flows it will generate. Buy the gap between the two."
+    },
+    {
+      "person": "Stanley Druckenmiller",
+      "source": "Ira Sohn Conference, 2015",
+      "quote": "I never use valuation to time the market. I use liquidity.",
+      "context": "Druckenmiller explained why he rode the 1990s tech bubble far longer than value investors — he tracked Fed liquidity, not P/E ratios.",
+      "principle": "Central bank money flows move markets more than fundamentals in the short term. Follow the liquidity tide."
+    },
+    {
+      "person": "Paul Tudor Jones",
+      "source": "Forbes Interview, 2018",
+      "quote": "The most important rule of trading is to play great defense, not great offense.",
+      "context": "Tudor Jones said this explaining why he obsessively cuts losers fast — he survived the 1987 crash by having asymmetric risk controls in place.",
+      "principle": "Capital preservation precedes capital growth. The math of loss recovery (need 100% gain to recover 50% loss) makes defense structurally superior."
+    },
+    {
+      "person": "George Soros",
+      "source": "The Alchemy of Finance, 1987",
+      "quote": "It's not whether you're right or wrong that's important, but how much money you make when you're right and how much you lose when you're wrong.",
+      "context": "Soros described this as the core of reflexivity — his framework for why payoff asymmetry matters more than win rate.",
+      "principle": "A 40% win rate with 3:1 reward-to-risk beats an 80% win rate with 1:1. Focus on bet sizing and exits, not accuracy."
+    },
+    {
+      "person": "Charlie Munger",
+      "source": "Wesco Financial Annual Meeting, 2003",
+      "quote": "Invert, always invert. Turn a situation or problem upside down. Look at it backwards.",
+      "context": "Munger applied this to avoiding financial ruin — instead of asking how to get rich, ask what destroys wealth and eliminate those behaviors.",
+      "principle": "Risk management by subtraction. Remove the ways you lose first, and outperformance becomes more probable."
+    },
+    {
+      "person": "Howard Marks",
+      "source": "Oaktree Capital Memo, 'Now What?', 2008",
+      "quote": "You can't predict. You can prepare.",
+      "context": "Marks wrote this memo after Lehman collapsed, explaining why Oaktree was positioned in distressed debt before the crisis — through scenario preparation, not forecasting.",
+      "principle": "Build portfolios robust to multiple outcomes. Preparation compounds. Prediction fails."
+    },
+    {
+      "person": "Peter Lynch",
+      "source": "One Up On Wall Street, 1989",
+      "quote": "The person that turns over the most rocks wins the game.",
+      "context": "Lynch described his investment process at Fidelity Magellan — visiting companies, reading filings, talking to competitors — generating 29.2% annual returns for 13 years.",
+      "principle": "Information edge comes from depth of research, not speed of reaction. Do the work others won't."
+    },
+    {
+      "person": "Jamie Dimon",
+      "source": "JPMorgan Chase Annual Letter, 2023",
+      "quote": "We should never assume the world will be safer tomorrow than it is today.",
+      "context": "Dimon wrote this justifying JPMorgan holding excess capital buffers above regulatory minimums — a decision that cost short-term ROE but protected through 2008 and 2020.",
+      "principle": "Stress-testing for tail risks isn't pessimism — it's the structural advantage of surviving when competitors don't."
+    },
+    {
+      "person": "Jeff Bezos",
+      "source": "Amazon Shareholder Letter, 1997",
+      "quote": "We are willing to be misunderstood for long periods of time.",
+      "context": "Bezos wrote this explaining Amazon's decision to sacrifice near-term profits for market share — a strategy Wall Street punished for years before it compounded into $1.3T in value.",
+      "principle": "Long-duration thinking requires accepting short-term misalignment with consensus. Conviction must be backed by data, not sentiment."
+    }
+  ]
+}
