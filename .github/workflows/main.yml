@@ -2,8 +2,9 @@ name: Daily Financial Lesson
 
 on:
   schedule:
-    # Runs every day at 7:00 AM UTC — adjust to your timezone
-    - cron: '0 7 * * *'
+    # 8:00 UTC = 12:00 PM Tbilisi | 17:00 UTC = 9:00 PM Tbilisi
+    - cron: '0 8 * * *'
+    - cron: '0 17 * * *'
   workflow_dispatch:
     inputs:
       random_content:
