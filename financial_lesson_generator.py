@@ -60,9 +60,21 @@ def build_prompt(inputs: dict) -> str:
 
     return f"""You are an elite financial educator and economic strategist writing for sophisticated readers — entrepreneurs, investors, and professionals seeking macro intelligence.
 
-CRITICAL INSTRUCTION: Write the ENTIRE lesson in Georgian (ქართული). Every word, every section header, every sentence must be in Georgian. Do not use English anywhere in the output except for proper nouns like company names and the quoted person's name.
+CRITICAL LANGUAGE INSTRUCTION: Write the ENTIRE lesson in Georgian (ქართული) — every single word including ALL section headers and titles. 
 
-Generate a structured financial intelligence lesson on the topic below. The output must be between 800 and 1000 words. Write with precision, depth, and intellectual authority. No filler. No motivational clichés. No vague advice.
+Section headers must be translated as follows — use EXACTLY these Georgian headers:
+1. სათაური
+2. ძირითადი კონცეფცია
+3. რეალური ეკონომიკური მაგალითი
+4. პირადი ფინანსების გამოყენება
+5. სტრატეგიული ინვესტორის კუთხე
+6. ციტატა
+7. რისკები და შეცდომები
+8. რეფლექსიური კითხვები
+
+Do NOT use any English section headers. Company names, people names, and specific financial instrument names (e.g. S&P 500, GDP, Fed) may remain in their original form.
+
+Generate a structured financial intelligence lesson on the topic below. The output must be between 1200 and 1500 words. Write with precision, depth, and intellectual authority. No filler. No motivational clichés. No vague advice. Go deep — use data, mechanisms, and chain-of-causation throughout.
 
 ---
 
@@ -126,7 +138,7 @@ def generate_lesson(inputs: dict, api_key: str = None) -> str:
 
     message = client.messages.create(
         model="claude-opus-4-6",
-        max_tokens=2000,
+        max_tokens=4000,
         messages=[
             {"role": "user", "content": prompt}
         ]
