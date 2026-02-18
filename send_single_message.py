@@ -1,86 +1,112 @@
 """
 send_single_message.py
-Reads the latest generated lesson and sends it via Twilio WhatsApp.
-Supports multiple recipients via comma-separated RECIPIENT_NUMBERS env var.
+Reads the latest generated lesson and sends it via Telegram Bot API.
+Supports sending to private chats, groups, and public channels.
+Auto-chunks messages that exceed Telegram's 4096 character limit.
 """
 
 import os
-from twilio.rest import Client
+import requests
 
 
-def chunk_message(text: str, max_length: int = 1500) -> list[str]:
+TELEGRAM_API = "https://api.telegram.org/bot{token}/{method}"
+
+
+def send_message(token: str, chat_id: str, text: str, parse_mode: str = "HTML") -> dict:
+    """Send a single message via Telegram Bot API."""
+    url = TELEGRAM_API.format(token=token, method="sendMessage")
+    payload = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": parse_mode,
+    }
+    response = requests.post(url, json=payload, timeout=30)
+    result = response.json()
+    if not result.get("ok"):
+        raise RuntimeError(f"Telegram API error: {result}")
+    return result
+
+
+def chunk_message(text: str, max_length: int = 4000) -> list[str]:
     """
-    WhatsApp messages have a 4096 char limit, but we chunk at 1500
-    for readability. Splits at paragraph boundaries when possible.
+    Split text into chunks under Telegram's 4096 char limit.
+    Splits at paragraph boundaries when possible.
     """
     if len(text) <= max_length:
         return [text]
 
     chunks = []
     paragraphs = text.split("\n\n")
-    current_chunk = ""
+    current = ""
 
     for para in paragraphs:
-        if len(current_chunk) + len(para) + 2 <= max_length:
-            current_chunk += (para + "\n\n") if current_chunk else para + "\n\n"
+        if len(current) + len(para) + 2 <= max_length:
+            current += para + "\n\n"
         else:
-            if current_chunk:
-                chunks.append(current_chunk.strip())
-            # If a single paragraph is too long, force split
+            if current:
+                chunks.append(current.strip())
             if len(para) > max_length:
                 for i in range(0, len(para), max_length):
                     chunks.append(para[i:i + max_length])
-                current_chunk = ""
+                current = ""
             else:
-                current_chunk = para + "\n\n"
+                current = para + "\n\n"
 
-    if current_chunk.strip():
-        chunks.append(current_chunk.strip())
+    if current.strip():
+        chunks.append(current.strip())
 
     return chunks
 
 
+def format_lesson_for_telegram(text: str) -> str:
+    """
+    Apply basic HTML formatting so section headers stand out in Telegram.
+    """
+    import re
+    # Bold numbered section headers e.g. "1. HEADLINE"
+    text = re.sub(
+        r'^(\d+\.\s+[A-Z &]+)$',
+        r'<b>\1</b>',
+        text,
+        flags=re.MULTILINE
+    )
+    # Bold ALL-CAPS standalone lines (unnumbered headers)
+    text = re.sub(
+        r'^([A-Z][A-Z\s&]{4,})$',
+        r'<b>\1</b>',
+        text,
+        flags=re.MULTILINE
+    )
+    return text
+
+
 def send_lesson():
-    # Load credentials
-    account_sid = os.environ["TWILIO_ACCOUNT_SID"]
-    auth_token = os.environ["TWILIO_AUTH_TOKEN"]
-    from_number = os.environ["TWILIO_WHATSAPP_FROM"]  # e.g. "whatsapp:+14155238886"
-    recipients_raw = os.environ["RECIPIENT_NUMBERS"]  # e.g. "+1234567890,+0987654321"
+    token = os.environ["TELEGRAM_BOT_TOKEN"]
+    chat_ids_raw = os.environ["TELEGRAM_CHAT_IDS"]  # comma-separated
 
-    recipients = [
-        f"whatsapp:{num.strip()}" if not num.strip().startswith("whatsapp:") else num.strip()
-        for num in recipients_raw.split(",")
-        if num.strip()
-    ]
+    chat_ids = [cid.strip() for cid in chat_ids_raw.split(",") if cid.strip()]
 
-    # Load the lesson
     lesson_path = "latest_lesson.txt"
     if not os.path.exists(lesson_path):
         print(f"ERROR: {lesson_path} not found. Run financial_lesson_generator.py first.")
         return
 
     with open(lesson_path, "r", encoding="utf-8") as f:
-        lesson_text = f.read()
+        raw_lesson = f.read()
 
-    client = Client(account_sid, auth_token)
-    chunks = chunk_message(lesson_text)
-    total_chunks = len(chunks)
+    lesson = format_lesson_for_telegram(raw_lesson)
+    chunks = chunk_message(lesson)
+    total = len(chunks)
 
-    print(f"Sending {total_chunks} message(s) to {len(recipients)} recipient(s)...")
+    print(f"Sending {total} message(s) to {len(chat_ids)} chat(s)...")
 
-    for recipient in recipients:
+    for chat_id in chat_ids:
         for i, chunk in enumerate(chunks, 1):
-            prefix = f"[{i}/{total_chunks}] " if total_chunks > 1 else ""
-            body = prefix + chunk
+            prefix = f"<b>[{i}/{total}]</b>\n\n" if total > 1 else ""
+            send_message(token, chat_id, prefix + chunk)
+            print(f"  Sent to {chat_id} [{i}/{total}]")
 
-            message = client.messages.create(
-                from_=from_number,
-                to=recipient,
-                body=body
-            )
-            print(f"Sent to {recipient} [{i}/{total_chunks}]: SID {message.sid}")
-
-    print("All messages delivered successfully.")
+    print("Done.")
 
 
 if __name__ == "__main__":
