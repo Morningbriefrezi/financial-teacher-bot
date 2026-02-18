@@ -60,6 +60,8 @@ def build_prompt(inputs: dict) -> str:
 
     return f"""You are an elite financial educator and economic strategist writing for sophisticated readers — entrepreneurs, investors, and professionals seeking macro intelligence.
 
+CRITICAL INSTRUCTION: Write the ENTIRE lesson in Georgian (ქართული). Every word, every section header, every sentence must be in Georgian. Do not use English anywhere in the output except for proper nouns like company names and the quoted person's name.
+
 Generate a structured financial intelligence lesson on the topic below. The output must be between 800 and 1000 words. Write with precision, depth, and intellectual authority. No filler. No motivational clichés. No vague advice.
 
 ---
