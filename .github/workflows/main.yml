@@ -1,30 +1,53 @@
-name: Send Financial Messages
+name: Daily Financial Lesson
 
 on:
   schedule:
-    - cron: '0 5 * * *'    # 09:00 Tbilisi
-    - cron: '50 8 * * *'   # 12:50 Tbilisi
-    - cron: '50 12 * * *'  # 16:50 Tbilisi
+    # Runs every day at 7:00 AM UTC (adjust to your preferred timezone)
+    - cron: '0 7 * * *'
   workflow_dispatch:
+    inputs:
+      random_content:
+        description: 'Use random content instead of date-seeded rotation'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
-  send-message:
+  generate-and-send:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    
-    - name: Install dependencies
-      run: pip install -r requirements.txt
-    
-    - name: Send message
-      env:
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: python send_single_message.py
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate financial lesson
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          RANDOM_CONTENT: ${{ github.event.inputs.random_content || 'false' }}
+        run: python financial_lesson_generator.py
+
+      - name: Send lesson via messaging platform
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_WHATSAPP_FROM: ${{ secrets.TWILIO_WHATSAPP_FROM }}
+          RECIPIENT_NUMBERS: ${{ secrets.RECIPIENT_NUMBERS }}
+        run: python send_single_message.py
+
+      - name: Commit lesson archive
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add lessons/
+          git diff --staged --quiet || git commit -m "Add lesson: $(date +%Y-%m-%d)"
+          git push
+        continue-on-error: true
