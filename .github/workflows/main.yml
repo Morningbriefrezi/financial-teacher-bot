@@ -1,10 +1,9 @@
-name: Daily Financial Lesson
+name: Financial Lesson (Every 2 Days - 3 Parts)
 
 on:
   schedule:
-    # 8:00 UTC = 12:00 PM Tbilisi | 17:00 UTC = 9:00 PM Tbilisi
-    - cron: '0 8 * * *'
-    - cron: '0 17 * * *'
+    # Runs every 2 days at 12:00 PM Tbilisi time (08:00 UTC)
+    - cron: '0 8 */2 * *'
   workflow_dispatch:
     inputs:
       random_content:
@@ -29,18 +28,46 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # 🔹 Step 1: Generate full lesson (800–1000 words)
       - name: Generate financial lesson
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           RANDOM_CONTENT: ${{ github.event.inputs.random_content || 'false' }}
         run: python financial_lesson_generator.py
 
-      - name: Send lesson via Telegram
+      # 🔹 Step 2: Split lesson into 3 Telegram-safe parts
+      - name: Split lesson into 3 parts
+        run: python split_lesson_into_parts.py
+
+      # 🔹 Step 3: Send part 1
+      - name: Send lesson Part 1
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
-        run: python send_single_message.py
+        run: python send_single_message.py lessons/part1.txt
 
+      # 🔹 Small delay (avoid Telegram flood control)
+      - name: Wait before next part
+        run: sleep 8
+
+      # 🔹 Step 4: Send part 2
+      - name: Send lesson Part 2
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
+        run: python send_single_message.py lessons/part2.txt
+
+      - name: Wait before final part
+        run: sleep 8
+
+      # 🔹 Step 5: Send part 3
+      - name: Send lesson Part 3
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
+        run: python send_single_message.py lessons/part3.txt
+
+      # 🔹 Archive full lesson
       - name: Archive lesson to repo
         run: |
           git config --local user.email "action@github.com"
