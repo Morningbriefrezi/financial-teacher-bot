@@ -1,7 +1,7 @@
 """
 financial_lesson_generator.py
-Generates structured 800–1000 word financial intelligence lessons
-using the Anthropic Claude API with rotating topics, case studies, and quotes.
+Generates structured financial intelligence lessons
+and automatically splits them into 3 Telegram-safe parts.
 """
 
 import anthropic
@@ -12,23 +12,21 @@ import hashlib
 from datetime import date, datetime
 
 
+# ----------------------------
+# CONTENT LOADING
+# ----------------------------
+
 def load_content_library(path: str = "topics.json") -> dict:
-    with open(path, "r") as f:
+    with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def deterministic_pick(items: list, seed: str) -> any:
-    """Pick an item deterministically from a list using a seed string."""
+def deterministic_pick(items: list, seed: str):
     index = int(hashlib.md5(seed.encode()).hexdigest(), 16) % len(items)
     return items[index]
 
 
 def select_daily_inputs(library: dict, today: date = None) -> dict:
-    """
-    Selects today's theme, case study, macro event, and quote.
-    Uses date as seed so the same day always returns the same inputs,
-    but override with random if RANDOM_CONTENT=true env var is set.
-    """
     if today is None:
         today = date.today()
 
@@ -54,84 +52,49 @@ def select_daily_inputs(library: dict, today: date = None) -> dict:
     }
 
 
+# ----------------------------
+# PROMPT BUILDER
+# ----------------------------
+
 def build_prompt(inputs: dict) -> str:
     case = inputs["case_study"]
     quote_data = inputs["quote"]
 
-    return f"""You are an elite financial educator and economic strategist writing for sophisticated readers — entrepreneurs, investors, and professionals seeking macro intelligence.
+    return f"""
+Write a structured financial intelligence lesson in Georgian (ქართული).
+Length: 1200–1500 words.
+Tone: Macro investor level. No fluff. No motivational clichés.
 
-CRITICAL LANGUAGE INSTRUCTION: Write the ENTIRE lesson in Georgian (ქართული) — every single word including ALL section headers and titles. 
+Use EXACT Georgian section headers:
+სათაური
+ძირითადი კონცეფცია
+რეალური ეკონომიკური მაგალითი
+პირადი ფინანსების გამოყენება
+სტრატეგიული ინვესტორის კუთხე
+ციტატა
+რისკები და შეცდომები
+რეფლექსიური კითხვები
 
-Section headers must be translated as follows — use EXACTLY these Georgian headers:
-1. სათაური
-2. ძირითადი კონცეფცია
-3. რეალური ეკონომიკური მაგალითი
-4. პირადი ფინანსების გამოყენება
-5. სტრატეგიული ინვესტორის კუთხე
-6. ციტატა
-7. რისკები და შეცდომები
-8. რეფლექსიური კითხვები
+TOPIC: {inputs["theme"]}
 
-Do NOT use any English section headers. Company names, people names, and specific financial instrument names (e.g. S&P 500, GDP, Fed) may remain in their original form.
+Case Study: {case["title"]} — {case["summary"]}
+Macro Event: {inputs["macro_event"]}
 
-Generate a structured financial intelligence lesson on the topic below. The output must be between 1200 and 1500 words. Write with precision, depth, and intellectual authority. No filler. No motivational clichés. No vague advice. Go deep — use data, mechanisms, and chain-of-causation throughout.
+Quote:
+{quote_data["person"]} — "{quote_data["quote"]}"
+Source: {quote_data["source"]}
+Context: {quote_data["context"]}
+Decision Principle: {quote_data["principle"]}
 
----
-
-TOPIC OF TODAY: {inputs["theme"]}
-
-REQUIRED INPUTS TO WEAVE IN:
-- Case Study: {case["title"]} — {case["summary"]}
-- Macro Event: {inputs["macro_event"]}
-- Quote Source: {quote_data["person"]} — "{quote_data["quote"]}" (Source: {quote_data["source"]})
-  Context: {quote_data["context"]}
-  Decision Principle: {quote_data["principle"]}
-
----
-
-STRICT STRUCTURE (use these exact section headers):
-
-1. HEADLINE
-A sharp, specific headline — not a clickbait title. Should signal the core insight.
-
-2. CORE CONCEPT
-Explain the concept deeply but clearly. Use mechanisms, not buzzwords. Define any technical term in plain language immediately after using it. No jargon for jargon's sake.
-
-3. REAL ECONOMIC EXAMPLE
-Use the provided case study. Include specific numbers, dates, and chain-of-causation. Show how the concept manifested in reality. Avoid generic narration — trace the exact mechanism.
-
-4. APPLIED PERSONAL FINANCE INSIGHT
-What does this mean for someone managing their own money? Give concrete, actionable positioning — not "diversify your portfolio." Speak to specific behaviors, instruments, or thresholds. Use numbers.
-
-5. STRATEGIC INVESTOR ANGLE
-Institutional-level thinking applied to individual portfolios. What would a macro hedge fund manager or allocator do given this concept? What indicators, ratios, or signals would they track? How does the macro event provided above change positioning?
-
-6. FORBES TOP 50 QUOTE
-Present the quote from {quote_data["person"]} exactly as provided.
-- Context: Where and why they said it. What market situation they were responding to.
-- Decision-Making Principle: Extract the operational rule an investor or financial decision-maker can apply immediately.
-
-7. RISK & MISTAKE SECTION
-Name 3 specific, non-obvious mistakes people make related to this topic. Use real behavior patterns. Quantify where possible. Do not list generic risks like "market volatility."
-
-8. REFLECTIVE QUESTIONS
-Three intellectually sharp questions that force the reader to examine their own financial assumptions or behaviors related to this topic. Questions should be uncomfortable — the kind that reveal blind spots.
-
----
-
-TONE AND STYLE RULES:
-- Write like a macro investor, not a financial blogger
-- Use precise language — avoid "very," "really," "significant" without data
-- Vary sentence length — mix short declarative statements with analytical depth
-- Do not repeat exact phrases between sections
-- Assume the reader is intelligent but not a professional economist
-- Every claim should be grounded in mechanism or data, not opinion
-- Output plain text only — no markdown formatting, no bullet symbols, no asterisks
+Output plain text only.
 """
 
 
+# ----------------------------
+# CLAUDE CALL
+# ----------------------------
+
 def generate_lesson(inputs: dict, api_key: str = None) -> str:
-    """Call Claude API to generate the lesson."""
     client = anthropic.Anthropic(api_key=api_key or os.environ["ANTHROPIC_API_KEY"])
 
     prompt = build_prompt(inputs)
@@ -139,19 +102,54 @@ def generate_lesson(inputs: dict, api_key: str = None) -> str:
     message = client.messages.create(
         model="claude-opus-4-6",
         max_tokens=4000,
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
+        messages=[{"role": "user", "content": prompt}]
     )
 
-    return message.content[0].text
+    return message.content[0].text.strip()
 
 
-def save_lesson(lesson: str, inputs: dict, output_dir: str = "lessons") -> str:
-    """Save lesson to a dated file."""
+# ----------------------------
+# SAVE & SPLIT
+# ----------------------------
+
+def split_into_three_parts(text: str, max_chars: int = 3500):
+    """
+    Splits text into 3 parts balanced by character count,
+    respecting Telegram 4096 character limit.
+    """
+
+    total_length = len(text)
+    target_size = total_length // 3
+
+    parts = []
+    start = 0
+
+    for i in range(2):
+        end = start + target_size
+
+        # avoid cutting mid-paragraph
+        split_point = text.rfind("\n", start, end)
+        if split_point == -1:
+            split_point = end
+
+        parts.append(text[start:split_point].strip())
+        start = split_point
+
+    parts.append(text[start:].strip())
+
+    # Ensure no part exceeds safe Telegram size
+    for i in range(len(parts)):
+        if len(parts[i]) > max_chars:
+            parts[i] = parts[i][:max_chars]
+
+    return parts
+
+
+def save_lesson_and_parts(lesson: str, inputs: dict, output_dir: str = "lessons"):
     os.makedirs(output_dir, exist_ok=True)
     today = date.today().isoformat()
-    filename = f"{output_dir}/lesson_{today}.txt"
+
+    full_path = f"{output_dir}/lesson_{today}.txt"
 
     header = (
         f"FINANCIAL INTELLIGENCE LESSON — {today}\n"
@@ -163,12 +161,27 @@ def save_lesson(lesson: str, inputs: dict, output_dir: str = "lessons") -> str:
         f"{'=' * 60}\n\n"
     )
 
-    with open(filename, "w", encoding="utf-8") as f:
+    with open(full_path, "w", encoding="utf-8") as f:
         f.write(header + lesson)
 
-    print(f"Lesson saved to {filename}")
-    return filename
+    print(f"Full lesson saved: {full_path}")
 
+    # Split lesson
+    parts = split_into_three_parts(lesson)
+
+    for i, part in enumerate(parts, start=1):
+        part_path = f"{output_dir}/part{i}.txt"
+        with open(part_path, "w", encoding="utf-8") as f:
+            f.write(part)
+
+        print(f"Saved: {part_path}")
+
+    return full_path
+
+
+# ----------------------------
+# MAIN
+# ----------------------------
 
 def main():
     print(f"[{datetime.now().isoformat()}] Generating financial lesson...")
@@ -183,15 +196,14 @@ def main():
     print("-" * 50)
 
     lesson = generate_lesson(inputs)
-    lesson_file = save_lesson(lesson, inputs)
 
-    # Store the lesson text for downstream use (send_single_message.py reads this)
+    save_lesson_and_parts(lesson, inputs)
+
+    # For compatibility if other scripts still read this
     with open("latest_lesson.txt", "w", encoding="utf-8") as f:
         f.write(lesson)
 
-    print("\n--- LESSON PREVIEW (first 500 chars) ---")
-    print(lesson[:500] + "...")
-    print(f"\nFull lesson: {lesson_file}")
+    print("\nLesson generation complete.")
 
 
 if __name__ == "__main__":
