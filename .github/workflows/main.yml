@@ -58,7 +58,7 @@ jobs:
       # 🔹 Send part 3
       - name: Send lesson Part 3
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_CHAT_IDS }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
         run: python send_single_message.py lessons/part3.txt
 
